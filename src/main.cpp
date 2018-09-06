@@ -8,6 +8,7 @@
 #include "ecu_lua_script.h"
 #include "electronic_control_unit.h"
 #include "ecu_timer.h"
+#include "doip_gateway.h"
 #include "utilities.h"
 #include <string>
 
@@ -48,6 +49,16 @@ int main(int argc, char** argv)
         threads.push_back(move(t));
         usleep(50000);
     }
+    
+    //create and start the doip gateway
+    DoIPGateway doip;
+    thread t(&DoIPGateway::startGateway, &doip);
+    thread t1(&DoIPGateway::sendToEcu, &doip);
+    thread t2(&DoIPGateway::startReceiver, &doip);
+
+    threads.push_back(move(t));
+    threads.push_back(move(t1));
+    threads.push_back(move(t2));
 
     for (unsigned int i = 0; i < threads.size(); ++i)
     {
