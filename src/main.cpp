@@ -9,9 +9,12 @@
 #include "electronic_control_unit.h"
 #include "ecu_timer.h"
 #include "utilities.h"
+#include "doip_simulator.h"
 #include <string>
 
 using namespace std;
+
+DoIPSimulator doip;
 
 void start_server(const string &config_file, const string &device)
 {
@@ -20,6 +23,8 @@ void start_server(const string &config_file, const string &device)
 
     auto script = make_unique<EcuLuaScript>("Main", LUA_CONFIG_PATH + config_file);
     ElectronicControlUnit ecu(device, move(script));
+    
+    doip.addECU(&ecu);
 }
 
 /**
@@ -48,6 +53,13 @@ int main(int argc, char** argv)
         threads.push_back(move(t));
         usleep(50000);
     }
+    
+    thread t(&DoIPSimulator::start, &doip);
+    thread t1(&DoIPSimulator::processDiagData, &doip);
+    
+    threads.push_back(move(t));
+    threads.push_back(move(t1));
+    
 
     for (unsigned int i = 0; i < threads.size(); ++i)
     {

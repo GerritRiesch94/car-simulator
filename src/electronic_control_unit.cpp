@@ -26,3 +26,7 @@ ElectronicControlUnit::~ElectronicControlUnit()
     broadcastReceiverThread_.join();
     udsReceiverThread_.join();
 }
+
+UdsReceiver* ElectronicControlUnit::getUdsReceiver() {
+    return &udsReceiver_;
+}

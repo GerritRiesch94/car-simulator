@@ -28,6 +28,7 @@ public:
     ElectronicControlUnit& operator =(ElectronicControlUnit&& orig) = default;
     virtual ~ElectronicControlUnit();
 
+    UdsReceiver* getUdsReceiver();
 private:
     std::uint16_t requId_;
     std::uint16_t respId_;
