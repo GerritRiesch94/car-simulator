@@ -13,6 +13,7 @@ using namespace std;
 ElectronicControlUnit::ElectronicControlUnit(const string& device, unique_ptr<EcuLuaScript> pEcuScript)
 : requId_(pEcuScript->getRequestId())
 , respId_(pEcuScript->getResponseId())
+, logicalAddress_(pEcuScript->getLogicalAddress())
 , sender_(respId_, requId_, device)
 , broadcastReceiver_(pEcuScript->getBroadcastId(), device, &udsReceiver_)
 , udsReceiver_(respId_, requId_, device, move(pEcuScript), &sender_, &sessionControl_)
@@ -27,6 +28,12 @@ ElectronicControlUnit::~ElectronicControlUnit()
     udsReceiverThread_.join();
 }
 
-UdsReceiver* ElectronicControlUnit::getUdsReceiver() {
+UdsReceiver* ElectronicControlUnit::getUdsReceiver() 
+{
     return &udsReceiver_;
+}
+
+uint16_t ElectronicControlUnit::getLogicalAddress() const
+{
+    return logicalAddress_;
 }

@@ -29,9 +29,11 @@ public:
     virtual ~ElectronicControlUnit();
 
     UdsReceiver* getUdsReceiver();
+    std::uint16_t getLogicalAddress() const;
 private:
     std::uint16_t requId_;
     std::uint16_t respId_;
+    std::uint16_t logicalAddress_;
     SessionController sessionControl_;
     IsoTpSender sender_;
     BroadcastReceiver broadcastReceiver_;
