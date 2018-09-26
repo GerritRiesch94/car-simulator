@@ -55,10 +55,10 @@ int main(int argc, char** argv)
     }
     
     thread t(&DoIPSimulator::start, &doip);
-    thread t1(&DoIPSimulator::processDiagData, &doip);
+    //thread t1(&DoIPSimulator::processDiagData, &doip);
     
     threads.push_back(move(t));
-    threads.push_back(move(t1));
+    //threads.push_back(move(t1));
     
 
     for (unsigned int i = 0; i < threads.size(); ++i)

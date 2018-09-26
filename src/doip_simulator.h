@@ -11,7 +11,7 @@ class DoIPSimulator
 public:
     DoIPSimulator();
     void start();
-    void receiveFromLib(unsigned char* data, int length);
+    void receiveFromLib(unsigned char* address, unsigned char* data, int length);
     void processDiagData();
     void sendDiag(const std::vector<unsigned char> data);
     void addECU(ElectronicControlUnit* ecu);
@@ -23,7 +23,8 @@ private:
     unsigned char* curr_diag_data;
     std::vector<ElectronicControlUnit*> ecus;
     
-    bool diagMessageReceived();
+    bool diagMessageReceived(unsigned char* targetAddress);
+    int findECU(unsigned char* address);
 };
 
 #endif /* DOIP_SIMULATOR_H */

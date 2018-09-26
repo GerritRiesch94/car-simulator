@@ -12,8 +12,8 @@ DoIPSimulator::DoIPSimulator() {
  * Initialize server instance with required callbacks, start the doip server
  */
 void DoIPSimulator::start() {
-    DiagnosticCallback cb = std::bind(&DoIPSimulator::receiveFromLib, this, std::placeholders::_1, std::placeholders::_2);
-    DiagnosticMessageNotification dmn = std::bind(&DoIPSimulator::diagMessageReceived, this);
+    DiagnosticCallback cb = std::bind(&DoIPSimulator::receiveFromLib, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    DiagnosticMessageNotification dmn = std::bind(&DoIPSimulator::diagMessageReceived, this, std::placeholders::_1);
     doipserver->setCallback(cb, dmn);
     
     //Udp
@@ -27,19 +27,26 @@ void DoIPSimulator::start() {
 }
 
 /**
- * Is called when the doip library receives a diagnostic message. 
+ * Is called when the doip library receives a diagnostic message.
+ * @param address   logical address of the ecu
  * @param data      message which was received
  * @param length    length of the message
  */
-void DoIPSimulator::receiveFromLib(unsigned char* data, int length) {
+void DoIPSimulator::receiveFromLib(unsigned char* address, unsigned char* data, int length) {
     printf("CarSimulator DoIP Simulator received: ");
     for(int i = 0; i < length; i++) {
-        printf("0x%x ", data[i]);
+        printf("0x%02X ", data[i]);
     }
     printf(" from doip lib.\n");
     
-    curr_diag_data_length = length;
-    curr_diag_data = data;
+    int index = findECU(address);
+    if(index != -1) {
+        std::vector<unsigned char> response = ecus.at(index)->getUdsReceiver()->proceedDoIPData(data,length);
+        
+        if(response.size() > 0) {
+            sendDiag(response);
+        }
+    }
 }
 
 /**
@@ -63,6 +70,7 @@ void DoIPSimulator::processDiagData() {
 
 /**
  * Passes the received response from a ecu back to the doip library
+ * @param data      respone from a ecu that will be send back
  */
 void DoIPSimulator::sendDiag(const std::vector<unsigned char> data) {
     
@@ -86,24 +94,59 @@ void DoIPSimulator::addECU(ElectronicControlUnit* ecu) {
 /**
  * Will be called when the doip library receives a diagnostic message.
  * The library notifies the application about the message.
- * 
- * @return  If a positive or negative ACK should be send to the client
+ * Checks if there is a ecu with the logical address
+ * @param targetAddress     logical address to the ecu
+ * @return                  If a positive or negative ACK should be send to the client
  */
-bool DoIPSimulator::diagMessageReceived() {
+bool DoIPSimulator::diagMessageReceived(unsigned char* targetAddress) {
+    PayloadType ackType;
+    unsigned char ackCode;
     
-    //both cases just to switch fast when testing
+    //if there isnt a ecu with the target address 
+    if(findECU(targetAddress) == -1) {
+        //send negative ack with unknown target address and return
+        ackType = PayloadType::DIAGNOSTICNEGATIVEACK;
+        ackCode = 0x03;
+        doipserver->sendDiagnosticAck(ackType, ackCode);
+        return false;
+    }
+    
     //positiv ack
-    //PayloadType ackType = PayloadType::DIAGNOSTICPOSITIVEACK;
-    //unsigned char ackCode = 0x00;
+    ackType = PayloadType::DIAGNOSTICPOSITIVEACK;
+    ackCode = 0x00;
     
     //negative ack
-    PayloadType ackType = PayloadType::DIAGNOSTICNEGATIVEACK;
-    unsigned char ackCode = 0x02;
+    //ackType = PayloadType::DIAGNOSTICNEGATIVEACK;
+    //ackCode = 0x02;
     
     doipserver->sendDiagnosticAck(ackType, ackCode);
     
-    if(ackType == PayloadType::DIAGNOSTICPOSITIVEACK)
+    if(ackType == PayloadType::DIAGNOSTICPOSITIVEACK) {
+        std::cout << "Send positive diagnostic message ack" << std::endl;
         return true;
-    else
-        return false;
+    } else {
+        std::cout << "Send negative diagnostic message ack" << std::endl;
+        return false; 
+    }       
+}
+
+/**
+ * Find a ECU where the given address matches with the logical address
+ * @param address   target address
+ * @return          index of ecu in the vector
+ */
+int DoIPSimulator::findECU(unsigned char* address) {
+    int ecuIndex = -1;
+
+    //Check if there is a running ecu where logicalAddress == targetAddress
+    for(unsigned int i = 0; i < ecus.size(); i++) {
+        unsigned char logicalAddress [2] = {ecus.at(i)->getLogicalAddress() >> 8, ecus.at(i)->getLogicalAddress() & 0xFF };
+        
+        if(logicalAddress[0] == address[0] && logicalAddress[1] == address[1]) {
+            ecuIndex = i;
+            break;
+        }
+    }
+    
+    return ecuIndex;
 }
