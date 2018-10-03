@@ -54,12 +54,8 @@ int main(int argc, char** argv)
         usleep(50000);
     }
     
-    thread t(&DoIPSimulator::start, &doip);
-    //thread t1(&DoIPSimulator::processDiagData, &doip);
-    
-    threads.push_back(move(t));
-    //threads.push_back(move(t1));
-    
+    thread t(&DoIPSimulator::start, &doip);  
+    threads.push_back(move(t));    
 
     for (unsigned int i = 0; i < threads.size(); ++i)
     {

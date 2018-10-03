@@ -4,7 +4,6 @@
  * Constructor. Creates a DoIPServer for this simulator
  */
 DoIPSimulator::DoIPSimulator() {
-    curr_diag_data = nullptr;
     doipserver = new DoIPServer();
 }
 
@@ -44,42 +43,25 @@ void DoIPSimulator::receiveFromLib(unsigned char* address, unsigned char* data, 
         std::vector<unsigned char> response = ecus.at(index)->getUdsReceiver()->proceedDoIPData(data,length);
         
         if(response.size() > 0) {
-            sendDiag(response);
+            unsigned char logicalAddress [2] = {ecus.at(index)->getLogicalAddress() >> 8, ecus.at(index)->getLogicalAddress() & 0xFF };
+            sendDiag(response, logicalAddress);
         }
     }
 }
 
 /**
- * Constantly checks if the simulator received data from the lib, if thats the case
- * it passes the received data to the ecu
- */
-void DoIPSimulator::processDiagData() {
-    while(curr_diag_data == nullptr) {
-        sleep(2);
-    }
-    
-    std::vector<unsigned char> response = ecus.at(0)->getUdsReceiver()->proceedDoIPData(curr_diag_data, curr_diag_data_length);
-    
-    curr_diag_data_length = 0;
-    curr_diag_data = nullptr;
-    
-    if(response.size() > 0) {
-        sendDiag(response);
-    }
-}
-
-/**
  * Passes the received response from a ecu back to the doip library
- * @param data      respone from a ecu that will be send back
+ * @param data              respone from a ecu that will be send back
+ * @param logicalAddress    logical address of the ecu where data came from
  */
-void DoIPSimulator::sendDiag(const std::vector<unsigned char> data) {
+void DoIPSimulator::sendDiag(const std::vector<unsigned char> data, unsigned char* logicalAddress) {
     
     unsigned char* msg = new unsigned char[data.size()];
     for(unsigned int i = 0; i < data.size(); i++) {
         msg[i] = data[i];
     }
     
-    doipserver->receiveDiagnosticPayload(msg, data.size());
+    doipserver->receiveDiagnosticPayload(logicalAddress, msg, data.size());
     delete[] msg;
 }
 
@@ -110,7 +92,7 @@ bool DoIPSimulator::diagMessageReceived(unsigned char* targetAddress) {
         doipserver->sendDiagnosticAck(ackType, ackCode);
         return false;
     }
-    
+  
     //positiv ack
     ackType = PayloadType::DIAGNOSTICPOSITIVEACK;
     ackCode = 0x00;
@@ -127,7 +109,7 @@ bool DoIPSimulator::diagMessageReceived(unsigned char* targetAddress) {
     } else {
         std::cout << "Send negative diagnostic message ack" << std::endl;
         return false; 
-    }       
+    }
 }
 
 /**

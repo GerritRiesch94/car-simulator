@@ -12,15 +12,11 @@ public:
     DoIPSimulator();
     void start();
     void receiveFromLib(unsigned char* address, unsigned char* data, int length);
-    void processDiagData();
-    void sendDiag(const std::vector<unsigned char> data);
+    void sendDiag(const std::vector<unsigned char> data, unsigned char* logicalAddress);
     void addECU(ElectronicControlUnit* ecu);
-    
 
 private:
     DoIPServer* doipserver;
-    int curr_diag_data_length;
-    unsigned char* curr_diag_data;
     std::vector<ElectronicControlUnit*> ecus;
     
     bool diagMessageReceived(unsigned char* targetAddress);
