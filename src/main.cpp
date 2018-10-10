@@ -10,6 +10,7 @@
 #include "ecu_timer.h"
 #include "utilities.h"
 #include "doip_simulator.h"
+#include "doip_lua_script.h"
 #include <string>
 
 using namespace std;
@@ -37,6 +38,7 @@ void start_server(const string &config_file, const string &device)
 int main(int argc, char** argv)
 {
     string device = "vcan0";
+    
     if (argc > 1)
     {
         device = argv[1];
@@ -49,11 +51,16 @@ int main(int argc, char** argv)
 
     for (const string &config_file : config_files)
     {
+        if(config_file.find("doip") != string::npos) {
+            doip.doipConfig = new DoipLuaScript(LUA_CONFIG_PATH + config_file);
+            continue;
+        }
+        
         thread t(start_server, config_file, device);
         threads.push_back(move(t));
         usleep(50000);
     }
-    
+
     thread t(&DoIPSimulator::start, &doip);  
     threads.push_back(move(t));    
 
