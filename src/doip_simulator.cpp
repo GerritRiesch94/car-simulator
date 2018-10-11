@@ -15,6 +15,8 @@ void DoIPSimulator::start() {
     DiagnosticMessageNotification dmn = std::bind(&DoIPSimulator::diagMessageReceived, this, std::placeholders::_1);
     doipserver->setCallback(cb, dmn);
     
+    std::cout << "Interval: " << doipConfig->getAnnounceInterval() << std::endl;
+    std::cout << "Number: " << doipConfig->getAnnounceNumber() << std::endl;
     //Udp
     doipserver->setupUdpSocket();
     doipserver->receiveUdpMessage();

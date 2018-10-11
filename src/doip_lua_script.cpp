@@ -13,6 +13,24 @@ DoipLuaScript::DoipLuaScript(const std::string& luaScript) {
         
         if(lua_state[id.c_str()].exists()) {
             
+            auto announce_num = lua_state[id.c_str()][ANNOUNCE_NUM];
+            if(announce_num.exists()) {
+                //set announce number from lua file
+                A_DoIP_Announce_Num = announce_num;
+            } else {
+                //set announce number to default
+                A_DoIP_Announce_Num = 2;
+            }
+            
+            auto announce_interval = lua_state[id.c_str()][ANNOUNCE_INTERVAL];
+            if(announce_interval.exists()) {
+                //set announce interval from lua file
+                A_DoIP_Announce_Interval = announce_interval;
+            } else {
+                //set announce interval to default
+                A_DoIP_Announce_Interval = 500;
+            }
+            
             std::string vin = lua_state[id.c_str()][VIN];
             if(!vin.empty()) {
                 //set vin from lua file
@@ -111,4 +129,23 @@ std::string DoipLuaScript::getGid() const
 std::uint8_t DoipLuaScript::getFurtherAction() const
 {
     return furtherAction_;
+}
+
+/**
+ * Gets the number of announcements messages which will be sended
+ * @return      times the announcment message
+ */
+int DoipLuaScript::getAnnounceNumber() const 
+{
+    return A_DoIP_Announce_Num;
+}
+
+/**
+ * Gets the timing parameter which specifies the time between the
+ * announcement messages
+ * @return      delay in milliseconds
+ */
+int DoipLuaScript::getAnnounceInterval() const
+{
+    return A_DoIP_Announce_Interval;
 }
