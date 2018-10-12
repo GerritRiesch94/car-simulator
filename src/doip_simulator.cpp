@@ -14,9 +14,26 @@ void DoIPSimulator::start() {
     DiagnosticCallback cb = std::bind(&DoIPSimulator::receiveFromLib, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     DiagnosticMessageNotification dmn = std::bind(&DoIPSimulator::diagMessageReceived, this, std::placeholders::_1);
     doipserver->setCallback(cb, dmn);
+    //doipserver->setEIDdefault();    //setting EID to Default Value -> Address of the first ethernet controller
+    
+    std::string tempVIN = doipConfig->getVin();
+    unsigned int tempLogicalAddress = doipConfig->getLogicalAddress();
+    uint64_t tempEID = doipConfig->getEid();
+    uint64_t tempGID = doipConfig->getGid();
+    int tempFAR = doipConfig->getFurtherAction();
+    
+    doipserver->setVIN(tempVIN);
+    doipserver->setLogicalAddress(tempLogicalAddress);
+    doipserver->setEID(tempEID);
+    doipserver->setGID(tempGID);
+    doipserver->setFAR(tempFAR);
+    
+    
+    
     
     //Udp
     doipserver->setupUdpSocket();
+    doipserver->sendVehicleAnnouncement();
     doipserver->receiveUdpMessage();
     
     //Tcp

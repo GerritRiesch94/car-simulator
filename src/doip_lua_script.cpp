@@ -33,20 +33,20 @@ DoipLuaScript::DoipLuaScript(const std::string& luaScript) {
             
             std::string eid = lua_state[id.c_str()][EID];
             if(!eid.empty()) {
-                //set eid from lua
-                eid_ = eid;
+                //set eid from lua              
+                eid_ = std::stoull(eid);       
             } else {
-                //set eid to default
-                eid_ = "000000";
+                
+                EIDflag = true;     
             }
             
             std::string gid = lua_state[id.c_str()][GID];
             if(!gid.empty()) {
                 //set gid from lua
-                gid_ = gid;
+                gid_ = std::stoull(gid);
             } else {
                 //set gid to default
-                gid_ = "000000000000";
+                gid_ = 0x000000000000;
             }
             
             auto furtheraction = lua_state[id.c_str()][FA];
@@ -90,7 +90,7 @@ std::uint16_t DoipLuaScript::getLogicalAddress() const
  * Gets the EID from the lua configuration file
  * @return      eid as string
  */
-std::string DoipLuaScript::getEid() const
+unsigned long DoipLuaScript::getEid() const
 {
     return eid_;
 }
@@ -99,7 +99,7 @@ std::string DoipLuaScript::getEid() const
  * Gets the GID from the lua configuration file
  * @return      gid as string
  */
-std::string DoipLuaScript::getGid() const 
+unsigned long DoipLuaScript::getGid() const 
 {
     return gid_;
 }
