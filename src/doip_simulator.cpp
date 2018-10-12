@@ -31,6 +31,8 @@ void DoIPSimulator::start() {
     
     
     
+    std::cout << "Interval: " << doipConfig->getAnnounceInterval() << std::endl;
+    std::cout << "Number: " << doipConfig->getAnnounceNumber() << std::endl;
     //Udp
     doipserver->setupUdpSocket();
     doipserver->sendVehicleAnnouncement();
