@@ -19,6 +19,7 @@ class DoipLuaScript
 {
 public:
     DoipLuaScript(const std::string& luaScript);
+    DoipLuaScript(); 
     
     std::string getVin() const;
     std::uint64_t getGid() const;
@@ -27,6 +28,7 @@ public:
     std::uint8_t getFurtherAction() const;
     int getAnnounceNumber() const;
     int getAnnounceInterval() const;
+    bool getEIDflag() const;
     
 private:
     sel::State lua_state;

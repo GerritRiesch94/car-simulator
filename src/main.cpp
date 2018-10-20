@@ -37,6 +37,8 @@ void start_server(const string &config_file, const string &device)
  */
 int main(int argc, char** argv)
 {
+    bool carSimConfigFlag = false;
+    
     string device = "vcan0";
     
     if (argc > 1)
@@ -48,10 +50,19 @@ int main(int argc, char** argv)
 
     vector<string> config_files = utils::getConfigFilenames(LUA_CONFIG_PATH);
     vector<thread> threads;
-
+    
+    if(config_files.size() > 0)
+    {
+        
     for (const string &config_file : config_files)
     {
-        if(config_file.find("doip") != string::npos) {
+        if(config_file.find("doip") != string::npos || config_file.find("carsimconfig") != string::npos) {
+            
+            if(config_file.find("carsimconfig") != string::npos) 
+            {
+                carSimConfigFlag = true;
+            }
+            
             doip.doipConfig = new DoipLuaScript(LUA_CONFIG_PATH + config_file);
             continue;
         }
@@ -60,10 +71,17 @@ int main(int argc, char** argv)
         threads.push_back(move(t));
         usleep(50000);
     }
-
+    
+    }
+    
+    if(carSimConfigFlag == false)   //if there is no config file for the doip server, set it to the default configuration
+    {
+        doip.doipConfig = new DoipLuaScript();
+    }
+    
     thread t(&DoIPSimulator::start, &doip);  
-    threads.push_back(move(t));    
-
+    threads.push_back(move(t)); 
+    
     for (unsigned int i = 0; i < threads.size(); ++i)
     {
         threads[i].join();

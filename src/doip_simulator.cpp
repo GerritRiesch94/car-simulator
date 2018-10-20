@@ -14,25 +14,9 @@ void DoIPSimulator::start() {
     DiagnosticCallback cb = std::bind(&DoIPSimulator::receiveFromLib, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     DiagnosticMessageNotification dmn = std::bind(&DoIPSimulator::diagMessageReceived, this, std::placeholders::_1);
     doipserver->setCallback(cb, dmn);
-    //doipserver->setEIDdefault();    //setting EID to Default Value -> Address of the first ethernet controller
     
-    std::string tempVIN = doipConfig->getVin();
-    unsigned int tempLogicalAddress = doipConfig->getLogicalAddress();
-    uint64_t tempEID = doipConfig->getEid();
-    uint64_t tempGID = doipConfig->getGid();
-    int tempFAR = doipConfig->getFurtherAction();
-    
-    doipserver->setVIN(tempVIN);
-    doipserver->setLogicalAddress(tempLogicalAddress);
-    doipserver->setEID(tempEID);
-    doipserver->setGID(tempGID);
-    doipserver->setFAR(tempFAR);
-    
-    
-    
-    
-    std::cout << "Interval: " << doipConfig->getAnnounceInterval() << std::endl;
-    std::cout << "Number: " << doipConfig->getAnnounceNumber() << std::endl;
+    configureDoipServer();
+
     //Udp
     doipserver->setupUdpSocket();
     doipserver->sendVehicleAnnouncement();
@@ -41,6 +25,7 @@ void DoIPSimulator::start() {
     //Tcp
     doipserver->setupSocket();
     while(1)
+        
         doipserver->receiveMessage();
 }
 
@@ -150,4 +135,35 @@ int DoIPSimulator::findECU(unsigned char* address) {
     }
     
     return ecuIndex;
+}
+
+void DoIPSimulator::configureDoipServer() {
+    
+    std::string tempVIN = doipConfig->getVin();
+    unsigned int tempLogicalAddress = doipConfig->getLogicalAddress();
+    uint64_t tempEID = doipConfig->getEid();
+    uint64_t tempGID = doipConfig->getGid();
+    int tempFAR = doipConfig->getFurtherAction();
+    
+    int tempNum = doipConfig->getAnnounceNumber(); 
+    int tempInterval = doipConfig->getAnnounceInterval();
+    
+    doipserver->setVIN(tempVIN);
+    doipserver->setLogicalAddress(tempLogicalAddress);
+    
+    if(doipConfig->getEIDflag() == true)
+    {
+        doipserver->setEIDdefault();
+    }
+    else
+    {
+        doipserver->setEID(tempEID);
+    }
+    
+    doipserver->setGID(tempGID);
+    doipserver->setFAR(tempFAR);
+    
+    doipserver->setA_DoIP_Announce_Num(tempNum);
+    doipserver->setA_DoIP_Announce_Interval(tempInterval);
+    
 }

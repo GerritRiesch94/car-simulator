@@ -4,6 +4,19 @@
  * Constructor. Reads lua file and save fields. 
  * @param luaScript     path to the lua script file
  */
+DoipLuaScript::DoipLuaScript(){ //if there is no config for the doip server or the ecus this default configuration will be used
+    
+    std::cout<<"Setting Default Configuration for the DoIPServer"<<std::endl;
+    A_DoIP_Announce_Num = 3;
+    A_DoIP_Announce_Interval = 500;
+    vin_ = "00000000000000000";
+    logicalAddress_ = int(0x0000);
+    EIDflag = true; 
+    gid_ = 0x000000000000;
+    furtherAction_ = int(0x00);    
+}
+
+
 DoipLuaScript::DoipLuaScript(const std::string& luaScript) {
 
     const std::string id = "Main";
@@ -19,7 +32,7 @@ DoipLuaScript::DoipLuaScript(const std::string& luaScript) {
                 A_DoIP_Announce_Num = announce_num;
             } else {
                 //set announce number to default
-                A_DoIP_Announce_Num = 2;
+                A_DoIP_Announce_Num = 3;
             }
             
             auto announce_interval = lua_state[id.c_str()][ANNOUNCE_INTERVAL];
@@ -148,4 +161,9 @@ int DoipLuaScript::getAnnounceNumber() const
 int DoipLuaScript::getAnnounceInterval() const
 {
     return A_DoIP_Announce_Interval;
+}
+
+bool DoipLuaScript::getEIDflag() const
+{
+    return EIDflag;
 }

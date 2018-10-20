@@ -23,6 +23,9 @@ private:
     
     bool diagMessageReceived(unsigned char* targetAddress);
     int findECU(unsigned char* address);
+    
+    void configureDoipServer();
+    
 };
 
 #endif /* DOIP_SIMULATOR_H */
