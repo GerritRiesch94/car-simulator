@@ -1,8 +1,7 @@
 #include "doip_lua_script.h"
 
 /**
- * Constructor. Reads lua file and save fields. 
- * @param luaScript     path to the lua script file
+ * Default Constructor if no lua file was found.
  */
 DoipLuaScript::DoipLuaScript(){ //if there is no config for the doip server or the ecus this default configuration will be used
     
@@ -17,6 +16,10 @@ DoipLuaScript::DoipLuaScript(){ //if there is no config for the doip server or t
 }
 
 
+/**
+ * Constructor. Reads lua file and save fields. 
+ * @param luaScript     path to the lua script file
+ */
 DoipLuaScript::DoipLuaScript(const std::string& luaScript) {
 
     const std::string id = "Main";

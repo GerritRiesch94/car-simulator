@@ -16,17 +16,31 @@ void DoIPSimulator::start() {
     doipserver->setCallback(cb, dmn);
     
     configureDoipServer();
-
-    //Udp
-    doipserver->setupUdpSocket();
-    doipserver->sendVehicleAnnouncement();
-    doipserver->receiveUdpMessage();
     
-    //Tcp
+    doipReceiver.push_back(std::thread(&DoIPSimulator::listenUdp, this));
+    doipReceiver.push_back(std::thread(&DoIPSimulator::listenTcp, this));
+    
+    doipserver->sendVehicleAnnouncement();
+}
+
+/*
+ * Check permantly if udp message was received
+ */
+void DoIPSimulator::listenUdp() {
+    doipserver->setupUdpSocket();
+    while(1) {
+        doipserver->receiveUdpMessage();
+    }
+}
+
+/*
+ * Check permantly if tcp message was received
+ */
+void DoIPSimulator::listenTcp() {
     doipserver->setupSocket();
-    while(1)
-        
+    while(1) {
         doipserver->receiveMessage();
+    }
 }
 
 /**
