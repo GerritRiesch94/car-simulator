@@ -322,3 +322,18 @@ uint16_t UdsReceiver::generateSeed()
     uniform_int_distribution<uint16_t> dist(0, numeric_limits<uint16_t>::max());
     return dist(gen);
 }
+
+
+
+std::vector<unsigned char> UdsReceiver::proceedDoIPData(const unsigned char* buffer, const size_t num_bytes) noexcept {
+    const uint8_t udsServiceIdentifier = buffer[0];
+    const string identifier = intToHexString(buffer, num_bytes);
+    
+    const bool isRaw = pEcuScript_->hasRaw(identifier);
+    vector<unsigned char> raw;
+    if(isRaw) {
+        raw = pEcuScript_->literalHexStrToBytes(pEcuScript_->getRaw(identifier));
+    }
+    
+    return raw;
+}

@@ -32,6 +32,7 @@ public:
 
     static std::uint16_t generateSeed();
     virtual void proceedReceivedData(const uint8_t* buffer, const size_t num_bytes) noexcept override;
+    std::vector<unsigned char> proceedDoIPData(const unsigned char* buffer, const size_t num_bytes) noexcept;
 
 private:
     std::unique_ptr<EcuLuaScript> pEcuScript_;
