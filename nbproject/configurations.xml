@@ -14,6 +14,7 @@
       <itemPath>src/isotp_sender.h</itemPath>
       <itemPath>src/service_identifier.h</itemPath>
       <itemPath>src/session_controller.h</itemPath>
+      <itemPath>src/start_arguments.h</itemPath>
       <itemPath>src/uds_receiver.h</itemPath>
       <itemPath>src/utilities.h</itemPath>
     </logicalFolder>
@@ -127,6 +128,11 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="src/start_arguments.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <folder path="TestFiles">
         <ccTool>
           <incDir>
@@ -327,6 +333,11 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="src/start_arguments.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <folder path="TestFiles">
         <ccTool>
           <incDir>
@@ -517,6 +528,11 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="src/start_arguments.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <folder path="TestFiles">
         <ccTool>
           <incDir>
