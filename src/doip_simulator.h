@@ -29,6 +29,7 @@ private:
     void configureDoipServer();
     void listenUdp();
     void listenTcp();
+    void disconnectClient();
    
 };
 

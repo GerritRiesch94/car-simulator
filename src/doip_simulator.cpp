@@ -4,7 +4,7 @@
  * Constructor. Creates a DoIPServer for this simulator
  */
 DoIPSimulator::DoIPSimulator() {
-    doipserver = new DoIPServer();
+    doipserver = new DoIPServer();   
 }
 
 /**
@@ -41,6 +41,10 @@ void DoIPSimulator::listenTcp() {
     while(1) {
         doipserver->receiveMessage();
     }
+}
+
+void DoIPSimulator::disconnectClient() {
+    doipserver->triggerDisconnection();
 }
 
 /**
