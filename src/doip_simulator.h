@@ -17,6 +17,7 @@ public:
     void receiveFromLib(unsigned char* address, unsigned char* data, int length);
     void sendDiag(const std::vector<unsigned char> data, unsigned char* logicalAddress);
     void addECU(ElectronicControlUnit* ecu);
+    DoIPServer* getServerInstance();
 
 private:
     DoIPServer* doipserver;

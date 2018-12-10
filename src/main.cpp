@@ -22,7 +22,7 @@ void start_server(const string &config_file, const string &device)
     cout << "start_server for config file: " << config_file
          << " on device: " << device << endl;
 
-    auto script = make_unique<EcuLuaScript>("Main", LUA_CONFIG_PATH + config_file);
+    auto script = make_unique<EcuLuaScript>("Main", LUA_CONFIG_PATH + config_file, doip.getServerInstance());
     ElectronicControlUnit ecu(device, move(script));
     
     doip.addECU(&ecu);

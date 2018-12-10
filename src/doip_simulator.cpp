@@ -181,3 +181,7 @@ void DoIPSimulator::configureDoipServer() {
     doipserver->setA_DoIP_Announce_Interval(tempInterval);
     
 }
+DoIPServer* DoIPSimulator::getServerInstance()
+{
+    return doipserver;
+}

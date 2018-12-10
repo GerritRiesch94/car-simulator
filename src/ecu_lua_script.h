@@ -12,6 +12,7 @@
 #include <string>
 #include <cstdint>
 #include <vector>
+#include "DoIPServer.h"
 
 constexpr char REQ_ID_FIELD[] = "RequestId";
 constexpr char RES_ID_FIELD[] = "ResponseId";
@@ -26,7 +27,7 @@ class EcuLuaScript
 {
 public:
     EcuLuaScript() = delete;
-    EcuLuaScript(const std::string& ecuIdent, const std::string& luaScript);
+    EcuLuaScript(const std::string& ecuIdent, const std::string& luaScript, DoIPServer* server);
     EcuLuaScript(const EcuLuaScript& orig) = delete;
     EcuLuaScript& operator =(const EcuLuaScript& orig) = delete;
     EcuLuaScript(EcuLuaScript&& orig) noexcept;
@@ -63,6 +64,7 @@ private:
     std::uint16_t responseId_;
     std::uint16_t broadcastId_ = DEFAULT_BROADCAST_ADDR;
     std::uint16_t logicalAddress_;
+    DoIPServer* registedServer = nullptr;
 
 };
 
