@@ -35,6 +35,7 @@
       <itemPath>src/isotp_sender.cpp</itemPath>
       <itemPath>src/main.cpp</itemPath>
       <itemPath>src/session_controller.cpp</itemPath>
+      <itemPath>src/start_arguments.cpp</itemPath>
       <itemPath>src/uds_receiver.cpp</itemPath>
       <itemPath>src/utilities.cpp</itemPath>
     </logicalFolder>
@@ -128,9 +129,9 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="src/start_arguments.h"
+      <item path="src/start_arguments.cpp"
             ex="false"
-            tool="3"
+            tool="1"
             flavor2="0">
       </item>
       <folder path="TestFiles">
@@ -249,6 +250,8 @@
       <item path="src/session_controller.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/session_controller.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/start_arguments.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/uds_receiver.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -333,9 +336,9 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="src/start_arguments.h"
+      <item path="src/start_arguments.cpp"
             ex="false"
-            tool="3"
+            tool="1"
             flavor2="0">
       </item>
       <folder path="TestFiles">
@@ -455,6 +458,8 @@
       </item>
       <item path="src/session_controller.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/start_arguments.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/uds_receiver.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/uds_receiver.h" ex="false" tool="3" flavor2="0">
@@ -528,9 +533,9 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="src/start_arguments.h"
+      <item path="src/start_arguments.cpp"
             ex="false"
-            tool="3"
+            tool="1"
             flavor2="0">
       </item>
       <folder path="TestFiles">
@@ -649,6 +654,8 @@
       <item path="src/session_controller.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/session_controller.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/start_arguments.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/uds_receiver.cpp" ex="false" tool="1" flavor2="0">
       </item>

@@ -35,6 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/89df9ec6/start_arguments.o \
 	${OBJECTDIR}/src/broadcast_receiver.o \
 	${OBJECTDIR}/src/doip_lua_script.o \
 	${OBJECTDIR}/src/doip_simulator.o \
@@ -94,6 +95,11 @@ LDLIBSOPTIONS=`pkg-config --libs lua5.2`
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/car-simulator: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/car-simulator ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/_ext/89df9ec6/start_arguments.o: /home/andi/Projekt/car-simulator/src/start_arguments.cpp
+	${MKDIR} -p ${OBJECTDIR}/_ext/89df9ec6
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Wall -I/usr/include/lua5.2 -ISelene/include `pkg-config --cflags lua5.2` -std=c++14  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/89df9ec6/start_arguments.o /home/andi/Projekt/car-simulator/src/start_arguments.cpp
 
 ${OBJECTDIR}/src/broadcast_receiver.o: src/broadcast_receiver.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
@@ -237,6 +243,19 @@ ${TESTDIR}/tests/utils_test_runner.o: tests/utils_test_runner.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Wall -I/usr/include/lua5.2 -ISelene/include -Isrc `pkg-config --cflags lua5.2` -std=c++14 `cppunit-config --cflags` -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/utils_test_runner.o tests/utils_test_runner.cpp
 
+
+${OBJECTDIR}/_ext/89df9ec6/start_arguments_nomain.o: ${OBJECTDIR}/_ext/89df9ec6/start_arguments.o /home/andi/Projekt/car-simulator/src/start_arguments.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/89df9ec6
+	@NMOUTPUT=`${NM} ${OBJECTDIR}/_ext/89df9ec6/start_arguments.o`; \
+	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
+	then  \
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -g -Wall -I/usr/include/lua5.2 -ISelene/include `pkg-config --cflags lua5.2` -std=c++14  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/89df9ec6/start_arguments_nomain.o /home/andi/Projekt/car-simulator/src/start_arguments.cpp;\
+	else  \
+	    ${CP} ${OBJECTDIR}/_ext/89df9ec6/start_arguments.o ${OBJECTDIR}/_ext/89df9ec6/start_arguments_nomain.o;\
+	fi
 
 ${OBJECTDIR}/src/broadcast_receiver_nomain.o: ${OBJECTDIR}/src/broadcast_receiver.o src/broadcast_receiver.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src
