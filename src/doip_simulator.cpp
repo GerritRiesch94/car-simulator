@@ -17,6 +17,11 @@ void DoIPSimulator::start() {
     
     configureDoipServer();
     
+    //if there is no config file for the doip server, set it to the default configuration
+    if(doipConfig == NULL) {
+        doipConfig = new DoipLuaScript();
+    }
+    
     doipReceiver.push_back(std::thread(&DoIPSimulator::listenUdp, this));
     doipReceiver.push_back(std::thread(&DoIPSimulator::listenTcp, this));
     

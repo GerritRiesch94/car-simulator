@@ -1,8 +1,8 @@
 #include "start_arguments.h"
-#include <unistd.h>
-#include <iostream>
 
+//Initialize extern variables
 bool startargs::doip_flag = false;
+bool startargs::can_flag = false;
 std::string startargs::can_device;
 
 /**
@@ -17,6 +17,7 @@ void startargs::parse_arguments(int argc, char** argv) {
     //when no arguments passed, doip and can simulation will be used
     if(argc <= 1) {
         startargs::doip_flag = true;
+        startargs::can_flag = true;
         startargs::can_device = startargs::DEFAULT_CAN_DEVICE;
         return;
     }
@@ -37,7 +38,9 @@ void startargs::parse_arguments(int argc, char** argv) {
         startargs::can_device = argv[arg_index];
     }
     
-    std::cout << "DoIPFlag: " << startargs::doip_flag << std::endl;
-    std::cout << "Can-Device: " << startargs::can_device << std::endl;
-    std::cout << "Can-Device Empty: " << startargs::can_device.empty() << std::endl;
+    //sets the can flag if device name was given
+    if(startargs::can_device.empty())
+        startargs::can_flag = false;
+    else 
+        startargs::can_flag = true;
 }

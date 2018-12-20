@@ -7,8 +7,21 @@
 #include "electronic_control_unit.h"
 #include <array>
 #include <unistd.h>
+#include <iostream>
 
 using namespace std;
+
+/**
+ * Constructor for a ECU which only simulate DoIP
+ * @param pEcuScript    pointer to ecu config object
+ */
+ElectronicControlUnit::ElectronicControlUnit(std::unique_ptr<EcuLuaScript> pEcuScript)
+: requId_(pEcuScript->getRequestId())
+, respId_(pEcuScript->getResponseId())
+, logicalAddress_(pEcuScript->getLogicalAddress())
+, udsReceiver_(move(pEcuScript))
+{
+}
 
 ElectronicControlUnit::ElectronicControlUnit(const string& device, unique_ptr<EcuLuaScript> pEcuScript)
 : requId_(pEcuScript->getRequestId())

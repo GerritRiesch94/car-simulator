@@ -13,7 +13,6 @@
 #include "doip_lua_script.h"
 #include "start_arguments.h"
 #include <string>
-#include <unistd.h>
 
 using namespace std;
 
@@ -25,9 +24,13 @@ void start_server(const string &config_file, const string &device)
          << " on device: " << device << endl;
 
     auto script = make_unique<EcuLuaScript>("Main", LUA_CONFIG_PATH + config_file);
-    ElectronicControlUnit ecu(device, move(script));
     
-    doip.addECU(&ecu);
+    if(startargs::can_flag) {
+        ElectronicControlUnit ecu(device, move(script));
+        doip.addECU(&ecu);
+    } else {
+        doip.addECU(new ElectronicControlUnit(move(script)));
+    }
 }
 
 /**
@@ -56,20 +59,17 @@ int main(int argc, char** argv)
         usleep(50000);
     }
     
-    //if there is no config file for the doip server, set it to the default configuration
-    if(doip.doipConfig == NULL)   
-    {
-        doip.doipConfig = new DoipLuaScript();
+    if(startargs::doip_flag) {
+        doip.start();
+        threads.push_back(move(doip.doipReceiver.at(0)));
+        threads.push_back(move(doip.doipReceiver.at(1)));
     }
-    
-    thread t(&DoIPSimulator::start, &doip);  
-    threads.push_back(move(t)); 
     
     for (unsigned int i = 0; i < threads.size(); ++i)
     {
         threads[i].join();
     }
-
+    
     return 0;
 }
 
