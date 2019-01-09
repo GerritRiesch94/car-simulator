@@ -44,6 +44,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/isotp_receiver.o \
 	${OBJECTDIR}/src/isotp_sender.o \
 	${OBJECTDIR}/src/session_controller.o \
+	${OBJECTDIR}/src/start_arguments.o \
 	${OBJECTDIR}/src/uds_receiver.o \
 	${OBJECTDIR}/src/utilities.o
 
@@ -139,6 +140,11 @@ ${OBJECTDIR}/src/session_controller.o: src/session_controller.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Wall -I/usr/include/lua5.2 -ISelene/include `pkg-config --cflags lua5.2` -std=c++14  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/session_controller.o src/session_controller.cpp
+
+${OBJECTDIR}/src/start_arguments.o: src/start_arguments.cpp
+	${MKDIR} -p ${OBJECTDIR}/src
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Wall -I/usr/include/lua5.2 -ISelene/include `pkg-config --cflags lua5.2` -std=c++14  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/start_arguments.o src/start_arguments.cpp
 
 ${OBJECTDIR}/src/uds_receiver.o: src/uds_receiver.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
@@ -353,6 +359,19 @@ ${OBJECTDIR}/src/session_controller_nomain.o: ${OBJECTDIR}/src/session_controlle
 	    $(COMPILE.cc) -g -Wall -I/usr/include/lua5.2 -ISelene/include `pkg-config --cflags lua5.2` -std=c++14  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/session_controller_nomain.o src/session_controller.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/src/session_controller.o ${OBJECTDIR}/src/session_controller_nomain.o;\
+	fi
+
+${OBJECTDIR}/src/start_arguments_nomain.o: ${OBJECTDIR}/src/start_arguments.o src/start_arguments.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src
+	@NMOUTPUT=`${NM} ${OBJECTDIR}/src/start_arguments.o`; \
+	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
+	then  \
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -g -Wall -I/usr/include/lua5.2 -ISelene/include `pkg-config --cflags lua5.2` -std=c++14  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/start_arguments_nomain.o src/start_arguments.cpp;\
+	else  \
+	    ${CP} ${OBJECTDIR}/src/start_arguments.o ${OBJECTDIR}/src/start_arguments_nomain.o;\
 	fi
 
 ${OBJECTDIR}/src/uds_receiver_nomain.o: ${OBJECTDIR}/src/uds_receiver.o src/uds_receiver.cpp 

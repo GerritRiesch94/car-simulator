@@ -11,6 +11,7 @@
 #include "utilities.h"
 #include "doip_simulator.h"
 #include "doip_lua_script.h"
+#include "start_arguments.h"
 #include <string>
 
 using namespace std;
@@ -23,9 +24,13 @@ void start_server(const string &config_file, const string &device)
          << " on device: " << device << endl;
 
     auto script = make_unique<EcuLuaScript>("Main", LUA_CONFIG_PATH + config_file);
-    ElectronicControlUnit ecu(device, move(script));
     
-    doip.addECU(&ecu);
+    if(startargs::can_flag) {
+        ElectronicControlUnit ecu(device, move(script));
+        doip.addECU(&ecu);
+    } else {
+        doip.addECU(new ElectronicControlUnit(move(script)));
+    }
 }
 
 /**
@@ -36,57 +41,35 @@ void start_server(const string &config_file, const string &device)
  * @return 0 on success, otherwise a negative value
  */
 int main(int argc, char** argv)
-{
-    bool carSimConfigFlag = false;
-    
-    string device = "vcan0";
-    
-    if (argc > 1)
-    {
-        device = argv[1];
-    }
-    
-    // listen to this communication with `isotpsniffer -s 100 -d 200 -c -td vcan0`
+{   
+    startargs::parse_arguments(argc, argv);
 
     vector<string> config_files = utils::getConfigFilenames(LUA_CONFIG_PATH);
     vector<thread> threads;
     
-    if(config_files.size() > 0)
-    {
-        
     for (const string &config_file : config_files)
     {
-        if(config_file.find("doip") != string::npos || config_file.find("carsimconfig") != string::npos) {
-            
-            if(config_file.find("carsimconfig") != string::npos) 
-            {
-                carSimConfigFlag = true;
-            }
-            
+        if(config_file.find("doip") != string::npos || config_file.find("carsimconfig") != string::npos) {   
             doip.doipConfig = new DoipLuaScript(LUA_CONFIG_PATH + config_file);
             continue;
         }
-        
-        thread t(start_server, config_file, device);
+            
+        thread t(start_server, config_file, startargs::can_device);
         threads.push_back(move(t));
         usleep(50000);
     }
     
+    if(startargs::doip_flag) {
+        doip.start();
+        threads.push_back(move(doip.doipReceiver.at(0)));
+        threads.push_back(move(doip.doipReceiver.at(1)));
     }
-    
-    if(carSimConfigFlag == false)   //if there is no config file for the doip server, set it to the default configuration
-    {
-        doip.doipConfig = new DoipLuaScript();
-    }
-    
-    thread t(&DoIPSimulator::start, &doip);  
-    threads.push_back(move(t)); 
     
     for (unsigned int i = 0; i < threads.size(); ++i)
     {
         threads[i].join();
     }
-
+    
     return 0;
 }
 
