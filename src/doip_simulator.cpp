@@ -17,6 +17,8 @@ void DoIPSimulator::start() {
     
     configureDoipServer();
     
+    doipserver->setupUdpSocket();
+    
     doipReceiver.push_back(std::thread(&DoIPSimulator::listenUdp, this));
     doipReceiver.push_back(std::thread(&DoIPSimulator::listenTcp, this));
     
@@ -27,8 +29,8 @@ void DoIPSimulator::start() {
  * Check permantly if udp message was received
  */
 void DoIPSimulator::listenUdp() {
-    doipserver->setupUdpSocket();
-    while(1) {
+    
+    while(1) {            
         doipserver->receiveUdpMessage();
     }
 }
@@ -38,7 +40,7 @@ void DoIPSimulator::listenUdp() {
  */
 void DoIPSimulator::listenTcp() {
     doipserver->setupSocket();
-    while(1) {
+    while(1) {   
         doipserver->receiveMessage();
     }
 }
