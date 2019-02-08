@@ -21,6 +21,7 @@ class ElectronicControlUnit
 {
 public:
     ElectronicControlUnit() = delete;
+    ElectronicControlUnit(std::unique_ptr<EcuLuaScript> pEcuScript);
     ElectronicControlUnit(const std::string& device, std::unique_ptr<EcuLuaScript> pEcuScript);
     ElectronicControlUnit(const ElectronicControlUnit& orig) = default;
     ElectronicControlUnit& operator =(const ElectronicControlUnit& orig) = default;

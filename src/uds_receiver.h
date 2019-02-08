@@ -18,6 +18,7 @@ class UdsReceiver : public IsoTpReceiver
 
 public:
     UdsReceiver() = delete;
+    UdsReceiver(std::unique_ptr<EcuLuaScript> pEcuScript);
     UdsReceiver(canid_t source,
                 canid_t dest,
                 const std::string& device,

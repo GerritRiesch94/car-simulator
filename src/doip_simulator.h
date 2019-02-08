@@ -18,11 +18,11 @@ public:
     void sendDiag(const std::vector<unsigned char> data, unsigned char* logicalAddress);
     void addECU(ElectronicControlUnit* ecu);
     DoIPServer* getServerInstance();
-
+    std::vector<std::thread> doipReceiver;
+    
 private:
     DoIPServer* doipserver;
     std::vector<ElectronicControlUnit*> ecus;
-    std::vector<std::thread> doipReceiver;
     
     bool diagMessageReceived(unsigned char* targetAddress);
     int findECU(unsigned char* address);
