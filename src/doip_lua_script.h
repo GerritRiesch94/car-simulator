@@ -11,6 +11,7 @@ constexpr char LA[] = "LOGICAL_ADDRESS";
 constexpr char EID[] = "EID";
 constexpr char GID[] = "GID";
 constexpr char FA[] = "FURTHER_ACTION";
+constexpr char GI[] = "T_TCP_General_Inactivity";
 
 constexpr char ANNOUNCE_NUM[] = "ANNOUNCE_NUM";
 constexpr char ANNOUNCE_INTERVAL[] = "ANNOUNCE_INT";
@@ -26,6 +27,7 @@ public:
     std::uint64_t getEid() const;
     std::uint16_t getLogicalAddress() const;
     std::uint8_t getFurtherAction() const;
+    std::uint16_t getGeneralInactivity() const;
     int getAnnounceNumber() const;
     int getAnnounceInterval() const;
     bool getEIDflag() const;
@@ -38,6 +40,7 @@ private:
     std::uint64_t gid_;
     std::uint16_t logicalAddress_;
     std::uint8_t furtherAction_;
+    std::uint16_t generalInactivity_;
     
 
     bool EIDflag = false;

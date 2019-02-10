@@ -13,7 +13,8 @@ DoIPSimulator::DoIPSimulator() {
 void DoIPSimulator::start() {
     DiagnosticCallback cb = std::bind(&DoIPSimulator::receiveFromLib, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     DiagnosticMessageNotification dmn = std::bind(&DoIPSimulator::diagMessageReceived, this, std::placeholders::_1);
-    doipserver->setCallback(cb, dmn);
+    CloseConnectionCallback ccb = std::bind(&DoIPSimulator::closeConnection, this);
+    doipserver->setCallback(cb, dmn, ccb);
     
     configureDoipServer();
     
@@ -21,11 +22,18 @@ void DoIPSimulator::start() {
     if(doipConfig == NULL) {
         doipConfig = new DoipLuaScript();
     }
-    
+    active = true;
     doipReceiver.push_back(std::thread(&DoIPSimulator::listenUdp, this));
     doipReceiver.push_back(std::thread(&DoIPSimulator::listenTcp, this));
     
     doipserver->sendVehicleAnnouncement();
+}
+
+/**
+ * Closes the connection of the server by ending the listener threads
+ */
+void DoIPSimulator::closeConnection() {
+    active = false;
 }
 
 /*
@@ -33,7 +41,7 @@ void DoIPSimulator::start() {
  */
 void DoIPSimulator::listenUdp() {
     doipserver->setupUdpSocket();
-    while(1) {
+    while(active) {
         doipserver->receiveUdpMessage();
     }
 }
@@ -43,7 +51,7 @@ void DoIPSimulator::listenUdp() {
  */
 void DoIPSimulator::listenTcp() {
     doipserver->setupSocket();
-    while(1) {
+    while(active) {
         doipserver->receiveMessage();
     }
 }
@@ -166,6 +174,8 @@ void DoIPSimulator::configureDoipServer() {
     
     int tempNum = doipConfig->getAnnounceNumber(); 
     int tempInterval = doipConfig->getAnnounceInterval();
+    
+    doipserver->setGeneralInactivityTime(doipConfig->getGeneralInactivity());
     
     doipserver->setVIN(tempVIN);
     doipserver->setLogicalAddress(tempLogicalAddress);

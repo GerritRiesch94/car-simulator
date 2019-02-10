@@ -92,6 +92,15 @@ DoipLuaScript::DoipLuaScript(const std::string& luaScript) {
                 furtherAction_ = int(0x00);
             }
             
+            auto generalInactivity = lua_state[id.c_str()][GI];
+            if(generalInactivity.exists()) {
+                //set general inactivity time from lua
+                generalInactivity_ = int(generalInactivity);
+            } else {
+                //set general inactivity time to default
+                generalInactivity_ = 300;
+            }
+            
         } else {
             throw std::invalid_argument("Invalid Lua configuration file for doip simulation");
         }
@@ -146,6 +155,15 @@ std::uint8_t DoipLuaScript::getFurtherAction() const
 {
     return furtherAction_;
 }
+
+/*
+ * Gets the T_TCP_General_Inactivity time from the lua configuration file
+ * @return      general inactivity time in seconds
+ */
+std::uint16_t DoipLuaScript::getGeneralInactivity() const {
+    return generalInactivity_;
+}
+
 
 /**
  * Gets the number of announcements messages which will be sended
