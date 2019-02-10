@@ -22,7 +22,7 @@ public:
 private:
     DoIPServer* doipserver;
     std::vector<ElectronicControlUnit*> ecus;
-    bool active = false;
+    bool serverActive = false;
     
     bool diagMessageReceived(unsigned char* targetAddress);
     int findECU(unsigned char* address);
