@@ -11,6 +11,7 @@ constexpr char LA[] = "LOGICAL_ADDRESS";
 constexpr char EID[] = "EID";
 constexpr char GID[] = "GID";
 constexpr char FA[] = "FURTHER_ACTION";
+constexpr char GI[] = "T_TCP_General_Inactivity";
 
 constexpr char ANNOUNCE_NUM[] = "ANNOUNCE_NUM";
 constexpr char ANNOUNCE_INTERVAL[] = "ANNOUNCE_INTERVAL";
@@ -26,6 +27,7 @@ public:
     std::uint64_t getEid() const;
     std::uint16_t getLogicalAddress() const;
     std::uint8_t getFurtherAction() const;
+    std::uint16_t getGeneralInactivity() const;
     int getAnnounceNumber() const;
     int getAnnounceInterval() const;
     bool getEIDflag() const;
@@ -33,11 +35,14 @@ public:
 private:
     sel::State lua_state;
     
+
     std::string vin;
     std::uint64_t eid;
     std::uint64_t gid;
     std::uint16_t logicalAddress;
     std::uint8_t furtherAction;
+    std::uint16_t generalInactivity_;
+
     
 
     bool EIDflag = false;

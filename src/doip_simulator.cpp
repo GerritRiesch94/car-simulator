@@ -11,9 +11,13 @@ DoIPSimulator::DoIPSimulator() {
  * Initialize server instance with required callbacks, start the doip server
  */
 void DoIPSimulator::start() {
-    DiagnosticCallback cb = std::bind(&DoIPSimulator::receiveFromLib, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-    DiagnosticMessageNotification dmn = std::bind(&DoIPSimulator::diagMessageReceived, this, std::placeholders::_1);
-    doipserver->setCallback(cb, dmn);
+    DiagnosticCallback receiveDiagnosticDataCallback = std::bind(&DoIPSimulator::receiveFromLib, 
+            this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    DiagnosticMessageNotification notifyDiagnosticMessageCallback = std::bind(&DoIPSimulator::diagMessageReceived, 
+            this, std::placeholders::_1);
+    CloseConnectionCallback closeConnectionCallback = std::bind(&DoIPSimulator::closeConnection, this);
+    doipserver->setCallback(receiveDiagnosticDataCallback, 
+            notifyDiagnosticMessageCallback, closeConnectionCallback);
     
     configureDoipServer();
     
@@ -26,18 +30,26 @@ void DoIPSimulator::start() {
 
     doipserver->setupUdpSocket();
   
+    serverActive = true;
     doipReceiver.push_back(std::thread(&DoIPSimulator::listenUdp, this));
     doipReceiver.push_back(std::thread(&DoIPSimulator::listenTcp, this));
     
     doipserver->sendVehicleAnnouncement();
 }
 
+/**
+ * Closes the connection of the server by ending the listener threads
+ */
+void DoIPSimulator::closeConnection() {
+    serverActive = false;
+}
+
 /*
  * Check permantly if udp message was received
  */
 void DoIPSimulator::listenUdp() {
-    
-    while(1) {            
+
+    while(serverActive) {
         doipserver->receiveUdpMessage();
     }
 }
@@ -46,8 +58,11 @@ void DoIPSimulator::listenUdp() {
  * Check permantly if tcp message was received
  */
 void DoIPSimulator::listenTcp() {
+    
     doipserver->setupTcpSocket();
-    while(1) {   
+    doipserver->listenTcpConnection();
+    
+    while(serverActive) {
         doipserver->receiveMessage();
     }
 }
@@ -108,35 +123,22 @@ void DoIPSimulator::addECU(ElectronicControlUnit* ecu) {
  * @return                  If a positive or negative ACK should be send to the client
  */
 bool DoIPSimulator::diagMessageReceived(unsigned char* targetAddress) {
-    PayloadType ackType;
     unsigned char ackCode;
     
     //if there isnt a ecu with the target address 
     if(findECU(targetAddress) == -1) {
         //send negative ack with unknown target address and return
-        ackType = PayloadType::DIAGNOSTICNEGATIVEACK;
         ackCode = 0x03;
-        doipserver->sendDiagnosticAck(ackType, ackCode);
+        std::cout << "Send negative diagnostic message ack" << std::endl;
+        doipserver->sendDiagnosticAck(false, ackCode);
         return false;
     }
   
-    //positiv ack
-    ackType = PayloadType::DIAGNOSTICPOSITIVEACK;
+    //send positiv ack
     ackCode = 0x00;
-    
-    //negative ack
-    //ackType = PayloadType::DIAGNOSTICNEGATIVEACK;
-    //ackCode = 0x02;
-    
-    doipserver->sendDiagnosticAck(ackType, ackCode);
-    
-    if(ackType == PayloadType::DIAGNOSTICPOSITIVEACK) {
-        std::cout << "Send positive diagnostic message ack" << std::endl;
-        return true;
-    } else {
-        std::cout << "Send negative diagnostic message ack" << std::endl;
-        return false; 
-    }
+    std::cout << "Send positive diagnostic message ack" << std::endl;
+    doipserver->sendDiagnosticAck(true, ackCode);
+    return true;
 }
 
 /**
@@ -171,6 +173,8 @@ void DoIPSimulator::configureDoipServer() {
     int tempNum = doipConfig->getAnnounceNumber(); 
     int tempInterval = doipConfig->getAnnounceInterval();
     
+    doipserver->setGeneralInactivityTime(doipConfig->getGeneralInactivity());
+    
     doipserver->setVIN(tempVIN);
     doipserver->setLogicalAddress(tempLogicalAddress);
     
@@ -188,9 +192,11 @@ void DoIPSimulator::configureDoipServer() {
     
     doipserver->setA_DoIP_Announce_Num(tempNum);
     doipserver->setA_DoIP_Announce_Interval(tempInterval);
+
     
 }
 DoIPServer* DoIPSimulator::getServerInstance()
 {
     return doipserver;
+
 }
