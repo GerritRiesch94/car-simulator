@@ -26,10 +26,13 @@ static constexpr int MAX_UDS_SIZE = 4096;
  * @param ecuIdent: the identifier name for the ECU (e.g. "PCM")
  * @param luaScript: the path to the Lua script
  */
-EcuLuaScript::EcuLuaScript(const string& ecuIdent, const string& luaScript)
+EcuLuaScript::EcuLuaScript(const string& ecuIdent, const string& luaScript, DoIPServer* server)
 {
     if (utils::existsFile(luaScript))
     {
+        
+        registedServer = server;
+        
         // inject the C++ functions into the Lua script
         lua_state_["ascii"] = &ascii;
         lua_state_["toByteResponse"] = &toByteResponse;
@@ -38,6 +41,10 @@ EcuLuaScript::EcuLuaScript(const string& ecuIdent, const string& luaScript)
         lua_state_["getCurrentSession"] = [this]() -> uint32_t { return this->getCurrentSession(); }; 
         lua_state_["switchToSession"] = [this](uint32_t ses) { this->switchToSession(ses); };
         lua_state_["sendRaw"] = [this](const string& msg) { this->sendRaw(msg); };
+        
+        //DoIP functions in Lua Script
+        lua_state_["disconnect"] = [this](){registedServer->triggerDisconnection();};
+        lua_state_["sendAnnouncement"] = [this] {registedServer->sendVehicleAnnouncement();};
 
         lua_state_.Load(luaScript);
         if (lua_state_[ecuIdent.c_str()].exists())
