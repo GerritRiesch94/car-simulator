@@ -41,7 +41,7 @@ private:
     std::uint64_t gid;
     std::uint16_t logicalAddress;
     std::uint8_t furtherAction;
-    std::uint16_t generalInactivity_;
+    std::uint16_t generalInactivity;
 
     
 

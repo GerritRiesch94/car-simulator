@@ -92,6 +92,15 @@ DoipConfigurationFile ::DoipConfigurationFile (const std::string& luaScript) {
                 this->furtherAction = int(0x00);
             }
             
+            auto generalInactivity = lua_state[id.c_str()][GI];
+            if(generalInactivity.exists()) {
+                //set general inactivity time from lua
+                generalInactivity = int(generalInactivity);
+            } else {
+                //set general inactivity time to default
+                generalInactivity = 300;
+            }
+            
         } else {
             throw std::invalid_argument("Invalid Lua configuration file for doip simulation");
         }
@@ -145,6 +154,14 @@ unsigned long DoipConfigurationFile ::getGid() const
 std::uint8_t DoipConfigurationFile ::getFurtherAction() const
 {
     return this->furtherAction;
+}
+
+/*
+ * Gets the T_TCP_General_Inactivity time from the lua configuration file
+ * @return      general inactivity time in seconds
+ */
+std::uint16_t DoipConfigurationFile::getGeneralInactivity() const {
+    return this->generalInactivity;
 }
 
 /**
