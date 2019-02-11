@@ -21,7 +21,7 @@ void DoIPSimulator::start() {
  
     //if there is no config file for the doip server, set it to the default configuration
     if(doipConfig == NULL) {
-        doipConfig = new DoipLuaScript();
+        doipConfig = new DoipConfigurationFile();
     }
 
     doipserver->setupUdpSocket();
@@ -46,7 +46,7 @@ void DoIPSimulator::listenUdp() {
  * Check permantly if tcp message was received
  */
 void DoIPSimulator::listenTcp() {
-    doipserver->setupSocket();
+    doipserver->setupTcpSocket();
     while(1) {   
         doipserver->receiveMessage();
     }

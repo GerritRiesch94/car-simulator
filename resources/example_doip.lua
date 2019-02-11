@@ -1,6 +1,6 @@
 Main = {
 	ANNOUNCE_NUM = 3,
-	ANNOUNCE_INT = 500,			-- in milliseconds
+	ANNOUNCE_INTERVAL = 500,			-- in milliseconds
 	
 	VIN = "00000000000000000",
 	LOGICAL_ADDRESS = 0x0000,

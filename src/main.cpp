@@ -10,7 +10,7 @@
 #include "ecu_timer.h"
 #include "utilities.h"
 #include "doip_simulator.h"
-#include "doip_lua_script.h"
+#include "doip_configuration_file.h"
 #include "start_arguments.h"
 #include <string>
 
@@ -50,7 +50,7 @@ int main(int argc, char** argv)
     for (const string &config_file : config_files)
     {
         if(config_file.find("doip") != string::npos || config_file.find("carsimconfig") != string::npos) {   
-            doip.doipConfig = new DoipLuaScript(LUA_CONFIG_PATH + config_file);
+            doip.doipConfig = new DoipConfigurationFile(LUA_CONFIG_PATH + config_file);
             continue;
         }
             

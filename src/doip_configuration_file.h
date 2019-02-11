@@ -1,5 +1,5 @@
-#ifndef DOIP_LUA_SCRIPT_H
-#define DOIP_LUA_SCRIPT_H
+#ifndef DOIP_CONFIGURATION_FILE_H
+#define DOIP_CONFIGURATION_FILE_H
 
 #include "selene.h"
 #include "utilities.h"
@@ -13,13 +13,13 @@ constexpr char GID[] = "GID";
 constexpr char FA[] = "FURTHER_ACTION";
 
 constexpr char ANNOUNCE_NUM[] = "ANNOUNCE_NUM";
-constexpr char ANNOUNCE_INTERVAL[] = "ANNOUNCE_INT";
+constexpr char ANNOUNCE_INTERVAL[] = "ANNOUNCE_INTERVAL";
 
-class DoipLuaScript 
+class DoipConfigurationFile 
 {
 public:
-    DoipLuaScript(const std::string& luaScript);
-    DoipLuaScript(); 
+    DoipConfigurationFile (const std::string& luaScript);
+    DoipConfigurationFile (); 
     
     std::string getVin() const;
     std::uint64_t getGid() const;
@@ -33,11 +33,11 @@ public:
 private:
     sel::State lua_state;
     
-    std::string vin_;
-    std::uint64_t eid_;
-    std::uint64_t gid_;
-    std::uint16_t logicalAddress_;
-    std::uint8_t furtherAction_;
+    std::string vin;
+    std::uint64_t eid;
+    std::uint64_t gid;
+    std::uint16_t logicalAddress;
+    std::uint8_t furtherAction;
     
 
     bool EIDflag = false;

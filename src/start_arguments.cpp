@@ -9,7 +9,7 @@ std::string startargs::can_device;
  * Parses the arguments when starting the car simulator.
  * Usage:   ./car-simulator -d vcan0    for doip and can simulation
  *          ./car-simulator             for doip and can simulation
- *          ./car-simualtor -d          for doip simulation
+ *          ./car-simulator -d          for doip simulation
  *          ./car-simulator vcan0       for can simulation
  */
 void startargs::parse_arguments(int argc, char** argv) {
