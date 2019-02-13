@@ -1,4 +1,6 @@
 #include "start_arguments.h"
+#include <string>
+#include <iostream>
 
 //Initialize extern variables
 bool startargs::doip_flag = false;
@@ -7,9 +9,9 @@ std::string startargs::can_device;
 
 /**
  * Parses the arguments when starting the car simulator.
- * Usage:   ./car-simulator -d vcan0    for doip and can simulation
+ * Usage:   ./car-simulator doip vcan0  for doip and can simulation
  *          ./car-simulator             for doip and can simulation
- *          ./car-simualtor -d          for doip simulation
+ *          ./car-simualtor doip        for doip simulation
  *          ./car-simulator vcan0       for can simulation
  */
 void startargs::parse_arguments(int argc, char** argv) {
@@ -21,26 +23,15 @@ void startargs::parse_arguments(int argc, char** argv) {
         startargs::can_device = startargs::DEFAULT_CAN_DEVICE;
         return;
     }
-        
-    int arg_index, arg = 0;
     
-    //checks if the doip flag was passed in the arguments
-    while((arg = getopt(argc, argv, "d")) != -1) {
-        switch(arg) {
-            case 'd':
-                startargs::doip_flag = true;
-                break;
+    for(int arg_index = 1; arg_index < argc; arg_index++) {
+        if(std::string(argv[arg_index]).find("doip") != std::string::npos) {
+            startargs::doip_flag = true;
+        } else {
+            //if the argument value is not doip then we assume it is a can device
+            //the latest argument which is not doip will be saved as can device 
+            startargs::can_flag = true;
+            startargs::can_device = std::string(argv[arg_index]);
         }
     }
-    
-    //checks if a can simulation device was passed in the arguments
-    for(arg_index = optind; arg_index < argc; arg_index++) {
-        startargs::can_device = argv[arg_index];
-    }
-    
-    //sets the can flag if device name was given
-    if(startargs::can_device.empty())
-        startargs::can_flag = false;
-    else 
-        startargs::can_flag = true;
 }

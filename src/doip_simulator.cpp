@@ -11,9 +11,9 @@ DoIPSimulator::DoIPSimulator() {
  * Initialize server instance with required callbacks, start the doip server
  */
 void DoIPSimulator::start() {
-    DiagnosticCallback receiveDiagnosticDataCallback = std::bind(&DoIPSimulator::receiveFromLib, 
+    DiagnosticCallback receiveDiagnosticDataCallback = std::bind(&DoIPSimulator::receiveFromLibrary, 
             this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-    DiagnosticMessageNotification notifyDiagnosticMessageCallback = std::bind(&DoIPSimulator::diagMessageReceived, 
+    DiagnosticMessageNotification notifyDiagnosticMessageCallback = std::bind(&DoIPSimulator::diagnosticMessageReceived, 
             this, std::placeholders::_1);
     CloseConnectionCallback closeConnectionCallback = std::bind(&DoIPSimulator::closeConnection, this);
     doipserver->setCallback(receiveDiagnosticDataCallback, 
@@ -56,7 +56,7 @@ void DoIPSimulator::listenTcp() {
     doipserver->setupTcpSocket();
     doipserver->listenTcpConnection();
     while(serverActive) {
-        doipserver->receiveMessage();
+        doipserver->receiveTcpMessage();
     }
 }
 
@@ -66,7 +66,7 @@ void DoIPSimulator::listenTcp() {
  * @param data      message which was received
  * @param length    length of the message
  */
-void DoIPSimulator::receiveFromLib(unsigned char* address, unsigned char* data, int length) {
+void DoIPSimulator::receiveFromLibrary(unsigned char* address, unsigned char* data, int length) {
     printf("CarSimulator DoIP Simulator received: ");
     for(int i = 0; i < length; i++) {
         printf("0x%02X ", data[i]);
@@ -79,7 +79,7 @@ void DoIPSimulator::receiveFromLib(unsigned char* address, unsigned char* data, 
         
         if(response.size() > 0) {
             unsigned char logicalAddress [2] = {ecus.at(index)->getLogicalAddress() >> 8, ecus.at(index)->getLogicalAddress() & 0xFF };
-            sendDiag(response, logicalAddress);
+            sendDiagnosticResponse(response, logicalAddress);
         }
     }
 }
@@ -89,7 +89,7 @@ void DoIPSimulator::receiveFromLib(unsigned char* address, unsigned char* data, 
  * @param data              respone from a ecu that will be send back
  * @param logicalAddress    logical address of the ecu where data came from
  */
-void DoIPSimulator::sendDiag(const std::vector<unsigned char> data, unsigned char* logicalAddress) {
+void DoIPSimulator::sendDiagnosticResponse(const std::vector<unsigned char> data, unsigned char* logicalAddress) {
     
     unsigned char* msg = new unsigned char[data.size()];
     for(unsigned int i = 0; i < data.size(); i++) {
@@ -115,7 +115,7 @@ void DoIPSimulator::addECU(ElectronicControlUnit* ecu) {
  * @param targetAddress     logical address to the ecu
  * @return                  If a positive or negative ACK should be send to the client
  */
-bool DoIPSimulator::diagMessageReceived(unsigned char* targetAddress) {
+bool DoIPSimulator::diagnosticMessageReceived(unsigned char* targetAddress) {
     unsigned char ackCode;
     
     //if there isnt a ecu with the target address 
