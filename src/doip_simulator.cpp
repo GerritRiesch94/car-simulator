@@ -21,10 +21,15 @@ void DoIPSimulator::start() {
     
     configureDoipServer();
     
+
+ 
     //if there is no config file for the doip server, set it to the default configuration
     if(doipConfig == NULL) {
-        doipConfig = new DoipLuaScript();
+        doipConfig = new DoipConfigurationFile();
     }
+
+    doipserver->setupUdpSocket();
+  
     serverActive = true;
     doipReceiver.push_back(std::thread(&DoIPSimulator::listenUdp, this));
     doipReceiver.push_back(std::thread(&DoIPSimulator::listenTcp, this));
@@ -43,7 +48,7 @@ void DoIPSimulator::closeConnection() {
  * Check permantly if udp message was received
  */
 void DoIPSimulator::listenUdp() {
-    doipserver->setupUdpSocket();
+
     while(serverActive) {
         doipserver->receiveUdpMessage();
     }
@@ -53,8 +58,10 @@ void DoIPSimulator::listenUdp() {
  * Check permantly if tcp message was received
  */
 void DoIPSimulator::listenTcp() {
+    
     doipserver->setupTcpSocket();
     doipserver->listenTcpConnection();
+    
     while(serverActive) {
         doipserver->receiveTcpMessage();
     }
@@ -185,4 +192,11 @@ void DoIPSimulator::configureDoipServer() {
     
     doipserver->setA_DoIP_Announce_Num(tempNum);
     doipserver->setA_DoIP_Announce_Interval(tempInterval);
+
+    
+}
+DoIPServer* DoIPSimulator::getServerInstance()
+{
+    return doipserver;
+
 }

@@ -10,7 +10,7 @@
 #include "ecu_timer.h"
 #include "utilities.h"
 #include "doip_simulator.h"
-#include "doip_lua_script.h"
+#include "doip_configuration_file.h"
 #include "start_arguments.h"
 #include <string>
 
@@ -23,7 +23,7 @@ void start_server(const string &config_file, const string &device)
     cout << "start_server for config file: " << config_file
          << " on device: " << device << endl;
 
-    auto script = make_unique<EcuLuaScript>("Main", LUA_CONFIG_PATH + config_file);
+    auto script = make_unique<EcuLuaScript>("Main", LUA_CONFIG_PATH + config_file, doip.getServerInstance());
     
     if(startargs::can_flag) {
         ElectronicControlUnit ecu(device, move(script));
@@ -50,7 +50,7 @@ int main(int argc, char** argv)
     for (const string &config_file : config_files)
     {
         if(config_file.find("doip") != string::npos || config_file.find("carsimconfig") != string::npos) {   
-            doip.doipConfig = new DoipLuaScript(LUA_CONFIG_PATH + config_file);
+            doip.doipConfig = new DoipConfigurationFile(LUA_CONFIG_PATH + config_file);
             continue;
         }
             

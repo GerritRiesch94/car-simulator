@@ -36,7 +36,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/src/broadcast_receiver.o \
-	${OBJECTDIR}/src/doip_lua_script.o \
+	${OBJECTDIR}/src/doip_configuration_file.o \
 	${OBJECTDIR}/src/doip_simulator.o \
 	${OBJECTDIR}/src/ecu_lua_script.o \
 	${OBJECTDIR}/src/ecu_timer.o \
@@ -102,10 +102,10 @@ ${OBJECTDIR}/src/broadcast_receiver.o: src/broadcast_receiver.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I/usr/include/lua5.2 -ISelene/include `pkg-config --cflags lua-5.2` -std=c++14  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/broadcast_receiver.o src/broadcast_receiver.cpp
 
-${OBJECTDIR}/src/doip_lua_script.o: src/doip_lua_script.cpp
+${OBJECTDIR}/src/doip_configuration_file.o: src/doip_configuration_file.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -I/usr/include/lua5.2 -ISelene/include `pkg-config --cflags lua-5.2` -std=c++14  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/doip_lua_script.o src/doip_lua_script.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/lua5.2 -ISelene/include `pkg-config --cflags lua-5.2` -std=c++14  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/doip_configuration_file.o src/doip_configuration_file.cpp
 
 ${OBJECTDIR}/src/doip_simulator.o: src/doip_simulator.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
@@ -263,17 +263,17 @@ ${OBJECTDIR}/src/broadcast_receiver_nomain.o: ${OBJECTDIR}/src/broadcast_receive
 	    ${CP} ${OBJECTDIR}/src/broadcast_receiver.o ${OBJECTDIR}/src/broadcast_receiver_nomain.o;\
 	fi
 
-${OBJECTDIR}/src/doip_lua_script_nomain.o: ${OBJECTDIR}/src/doip_lua_script.o src/doip_lua_script.cpp 
+${OBJECTDIR}/src/doip_configuration_file_nomain.o: ${OBJECTDIR}/src/doip_configuration_file.o src/doip_configuration_file.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src
-	@NMOUTPUT=`${NM} ${OBJECTDIR}/src/doip_lua_script.o`; \
+	@NMOUTPUT=`${NM} ${OBJECTDIR}/src/doip_configuration_file.o`; \
 	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
 	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -O2 -I/usr/include/lua5.2 -ISelene/include `pkg-config --cflags lua-5.2` -std=c++14  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/doip_lua_script_nomain.o src/doip_lua_script.cpp;\
+	    $(COMPILE.cc) -O2 -I/usr/include/lua5.2 -ISelene/include `pkg-config --cflags lua-5.2` -std=c++14  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/doip_configuration_file_nomain.o src/doip_configuration_file.cpp;\
 	else  \
-	    ${CP} ${OBJECTDIR}/src/doip_lua_script.o ${OBJECTDIR}/src/doip_lua_script_nomain.o;\
+	    ${CP} ${OBJECTDIR}/src/doip_configuration_file.o ${OBJECTDIR}/src/doip_configuration_file_nomain.o;\
 	fi
 
 ${OBJECTDIR}/src/doip_simulator_nomain.o: ${OBJECTDIR}/src/doip_simulator.o src/doip_simulator.cpp 
