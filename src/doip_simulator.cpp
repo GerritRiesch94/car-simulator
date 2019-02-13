@@ -63,7 +63,7 @@ void DoIPSimulator::listenTcp() {
     doipserver->listenTcpConnection();
     
     while(serverActive) {
-        doipserver->receiveMessage();
+        doipserver->receiveTcpMessage();
     }
 }
 
