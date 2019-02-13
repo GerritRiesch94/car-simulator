@@ -14,8 +14,8 @@ public:
     DoIPSimulator();
     DoipConfigurationFile* doipConfig;
     void start();
-    void receiveFromLib(unsigned char* address, unsigned char* data, int length);
-    void sendDiag(const std::vector<unsigned char> data, unsigned char* logicalAddress);
+    void receiveFromLibrary(unsigned char* address, unsigned char* data, int length);
+    void sendDiagnosticResponse(const std::vector<unsigned char> data, unsigned char* logicalAddress);
     void addECU(ElectronicControlUnit* ecu);
     DoIPServer* getServerInstance();
     std::vector<std::thread> doipReceiver;
@@ -25,7 +25,7 @@ private:
     std::vector<ElectronicControlUnit*> ecus;
     bool serverActive = false;
     
-    bool diagMessageReceived(unsigned char* targetAddress);
+    bool diagnosticMessageReceived(unsigned char* targetAddress);
     int findECU(unsigned char* address);
     
     void configureDoipServer();
